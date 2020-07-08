@@ -27,7 +27,7 @@ public class CsvReader {
                 action.setNewY(Integer.parseInt(data[6]));
                 action.setNewEnergy(Integer.parseInt(data[7]));
                 action.setNextPositionState(data[8]);
-                action.setActionResult(ActionResult.valueOf(data[9]));
+                action.setReward(Integer.parseInt(data[9]));
 
                 actions.add(action);
 

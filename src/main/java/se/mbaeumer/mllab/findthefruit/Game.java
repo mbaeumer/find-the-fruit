@@ -25,10 +25,10 @@ public class Game {
     }
 
     public void start() throws FileNotFoundException {
-        for (int i = 0; i< 1000; i++) {
+        for (int i = 0; i< 50; i++) {
             player.explore(chessboard, new GameStateEvaluator());
             updateBoard();
-            displayBoard();
+            //displayBoard();
         }
         SummaryService summaryService = new SummaryService();
         summaryService.showSummary(player);

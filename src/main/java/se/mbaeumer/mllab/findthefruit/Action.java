@@ -12,13 +12,13 @@ public class Action {
     private int newY;
     private int newEnergy;
     private String nextPositionState;
-    private ActionResult actionResult;
+    private int reward;
 
     public Action(){
 
     }
 
-    public Action(int oldX, int oldY, int oldEnergy, int xDelta, int yDelta, int newX, int newY, int newEnergy, String nextPositionState, ActionResult actionResult) {
+    public Action(int oldX, int oldY, int oldEnergy, int xDelta, int yDelta, int newX, int newY, int newEnergy, String nextPositionState, int reward) {
         this.oldX = oldX;
         this.oldY = oldY;
         this.oldEnergy = oldEnergy;
@@ -28,7 +28,7 @@ public class Action {
         this.newY = newY;
         this.newEnergy = newEnergy;
         this.nextPositionState = nextPositionState;
-        this.actionResult = actionResult;
+        this.reward = reward;
     }
 
     public int getOldX() {
@@ -103,11 +103,11 @@ public class Action {
         this.nextPositionState = nextPositionState;
     }
 
-    public ActionResult getActionResult() {
-        return actionResult;
+    public int getReward() {
+        return reward;
     }
 
-    public void setActionResult(ActionResult actionResult) {
-        this.actionResult = actionResult;
+    public void setReward(int reward) {
+        this.reward = reward;
     }
 }

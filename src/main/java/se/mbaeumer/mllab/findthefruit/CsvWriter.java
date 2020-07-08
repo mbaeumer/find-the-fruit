@@ -27,7 +27,7 @@ public class CsvWriter {
                 .append(action.getxDelta()).append(",").append(action.getyDelta()).append(",")
                 .append(action.getNewX()).append(",").append(action.getNewY()).append(",")
                 .append(action.getNewEnergy()).append(",").append(action.getNextPositionState()).append(",")
-                .append(action.getActionResult()).toString();
+                .append(action.getReward()).toString();
 
     }
 }

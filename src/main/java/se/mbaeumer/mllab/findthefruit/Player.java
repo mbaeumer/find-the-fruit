@@ -2,9 +2,11 @@ package se.mbaeumer.mllab.findthefruit;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class Player {
     private int xPos;
@@ -62,13 +64,18 @@ public class Player {
         Position nextPosition = selectNextPosition();
         move(nextPosition, gameStateEvaluator);
         Action latestAction = lessons.get(lessons.size()-1);
-        if (latestAction.getActionResult() == ActionResult.DEAD){
+        if (latestAction.getReward() == -1000){
             reset();
-        }else if (latestAction.getActionResult() == ActionResult.SUCCESS){
+        }else if (latestAction.getReward() == 1000){
+
             reset();
         }
         CsvWriter csvWriter = new CsvWriter();
         csvWriter.writeActions(lessons);
+    }
+
+    private void traceSolution(){
+        
     }
 
     private Position selectNextPosition(){
@@ -79,38 +86,61 @@ public class Player {
           // if exp == dangerous
           // if exp == unknown
           // if exp == not_dangerous
-        List<Position> potentialPositions = new ArrayList<>();
+        List<PotentialPosition> potentialPositions = new ArrayList<>();
         for (final PotentialVector potentialVector : potentialVectors){
-            ActionForecast actionForecast = evaluateNextPosition(potentialVector);
-            if (actionForecast != ActionForecast.DANGEROUS){
-                nextPosition = new Position(xPos + potentialVector.getX(), yPos + potentialVector.getY());
-                potentialPositions.add(nextPosition);
-
-            }
-
+            potentialPositions.add(evaluateNextPosition(potentialVector));
         }
-        int numberOfOptions = potentialPositions.size();
-        int selectedOption = ThreadLocalRandom.current().nextInt(0, potentialPositions.size());
-        return potentialPositions.get(selectedOption);
+
+        printAlternatives(potentialPositions);
+
+        PotentialPosition bestPosition = potentialPositions.stream().max(Comparator.comparing(PotentialPosition::getReward)).get();
+        return bestPosition.getPosition();
     }
 
-    private ActionForecast evaluateNextPosition(final PotentialVector potentialVector){
-        ActionForecast actionForecast = ActionForecast.UNKNOWN;
+    private void printAlternatives(List<PotentialPosition> potentialPositions){
+        String s = "";
+        for (PotentialPosition potentialPosition : potentialPositions){
+            s = s + "[" + potentialPosition.getPosition().getX() + "," + potentialPosition.getPosition().getY() + "]," + potentialPosition.getReward() + "-";
+        }
+        System.out.println(s);
 
-        Optional<Action> matchingAction = lessons.stream()
+    }
+
+    private PotentialPosition evaluateNextPosition(final PotentialVector potentialVector){
+        PotentialPosition potentialPosition = null;
+
+        /*
+       List<Action> matchingActions = lessons.stream()
                 .filter(action -> xPos == action.getOldX() && yPos == action.getOldY()
                 && potentialVector.getX() == action.getxDelta()
                         && potentialVector.getY() == action.getyDelta())
-                .findFirst();
+                .collect(Collectors.toList());
+        */
 
+        List<Action> matchingActions = lessons.stream()
+                .filter(action -> action.getNewX() == xPos + potentialVector.getX()
+                        && action.getNewY() == yPos + potentialVector.getY())
+                .collect(Collectors.toList());
+
+       Action action = matchingActions.stream().reduce((first, second) -> second).orElse(null);
+
+       if (action != null){
+           Position position = new Position(action.getNewX(), action.getNewY());
+           potentialPosition = new PotentialPosition(position, action.getReward());
+       }else{
+           Position position = new Position(xPos + potentialVector.getX(), yPos + potentialVector.getY());
+           potentialPosition = new PotentialPosition(position, 5);
+       }
+       /*
         if (matchingAction.isPresent()){
-            if (matchingAction.get().getActionResult() == ActionResult.DEAD){
-                actionForecast = ActionForecast.DANGEROUS;
-            }else{
-                actionForecast = ActionForecast.NOT_DANGEROUS;
-            }
+            Position position = new Position(matchingAction.get().getNewX(), matchingAction.get().getNewY());
+            potentialPosition = new PotentialPosition(position, matchingAction.get().getReward());
+        }else{
+            Position position = new Position(xPos + potentialVector.getX(), yPos + potentialVector.getY());
+            potentialPosition = new PotentialPosition(position, 5);
         }
-        return actionForecast;
+        */
+        return potentialPosition;
     }
 
     private void move(final Position nextPosition, final GameStateEvaluator gameStateEvaluator) throws FileNotFoundException {
@@ -122,10 +152,11 @@ public class Player {
         Action action = new Action(xPos, yPos, energy,
                 nextPosition.getX()-xPos, nextPosition.getY()-yPos,
                 nextPosition.getX(), nextPosition.getY(), energy - 1, getNextPositionState(nextPosition),
-                gameStateEvaluator.calculateGameState(lessons, nextPosition, energy -1));
+                gameStateEvaluator.calculateReward(lessons, nextPosition, energy -1));
         xPos = nextPosition.getX();
         yPos = nextPosition.getY();
         energy--;
+        System.out.println("Moved " + action.getNewX() + "," + action.getNewY() + "," + action.getReward());
         lessons.add(action);
 
     }

@@ -11,11 +11,11 @@ public class SummaryService {
         int countSuccess = 0;
 
         for (Action action: player.getLessons()){
-            if (action.getActionResult() == ActionResult.DEAD){
+            if (action.getReward() == -1000){
                 countDead++;
-            }else if (action.getActionResult() == ActionResult.SUCCESS){
+            }else if (action.getReward() == 1000){
                 countSuccess++;
-            }else if (action.getActionResult() == ActionResult.ALIVE){
+            }else{
                 countAlive++;
             }
 
@@ -36,20 +36,20 @@ public class SummaryService {
         List<Action> deadActions = new ArrayList<>();
 
 
-        while (i < player.getLessons().size()-1){
+        while (i < player.getLessons().size()){
             Action action = player.getLessons().get(i);
-            if (action.getActionResult() == ActionResult.DEAD){
+            if (action.getReward() == -1000){
                 deadActions.add(action);
                 countDead++;
-            }else if (action.getActionResult() == ActionResult.SUCCESS){
+            }else if (action.getReward() == 1000){
                 countSuccess++;
-            }else if (action.getActionResult() == ActionResult.ALIVE){
+            }else{
                 countAlive++;
             }
             i++;
         }
 
-        System.out.println("Summary (for recent run only");
+        System.out.println("Summary (for most recent run only)");
         System.out.println("Alive:\t" + countAlive);
         System.out.println("Dead:\t" + countDead);
         System.out.println("Success:\t" + countSuccess);
