@@ -32,6 +32,7 @@ public class Game {
         }
         SummaryService summaryService = new SummaryService();
         summaryService.showSummary(player);
+        showSolution();
         // get the players new position
         // calculate the new status
         // update the player´s "experience"
@@ -96,6 +97,14 @@ public class Game {
                 System.out.print(chessboard[i][j]+"\t");
             }
             System.out.println();
+        }
+    }
+
+    private void showSolution(){
+        if (player.getSolution() != null){
+            player.getSolution().getPositions().stream().forEach(position -> System.out.println(position.getX() + "," + position.getY()));
+        }else{
+            System.out.println("No solution found");
         }
     }
 }
