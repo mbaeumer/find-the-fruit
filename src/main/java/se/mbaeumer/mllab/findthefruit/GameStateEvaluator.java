@@ -5,6 +5,12 @@ import java.util.stream.Collectors;
 
 public class GameStateEvaluator {
 
+    private int boardLength = 0;
+
+    public GameStateEvaluator(int boardLength) {
+        this.boardLength = boardLength;
+    }
+
     public ActionResult calculateGameState(List<Action> lessons, final Position position, final int energy){
         ActionResult actionResult = ActionResult.ALIVE;
         if (isInvalidPosition(position) || energy <= 0 || isStepBack(lessons,position)){
@@ -55,6 +61,6 @@ public class GameStateEvaluator {
     }
 
     private boolean isInvalidPosition(final Position position){
-        return position.getX() < 0 || position.getX() >= 4 || position.getY() < 0 || position.getY() >= 4;
+        return position.getX() < 0 || position.getX() >= boardLength || position.getY() < 0 || position.getY() >= boardLength;
     }
 }

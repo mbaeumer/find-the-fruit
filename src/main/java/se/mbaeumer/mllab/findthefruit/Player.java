@@ -17,7 +17,7 @@ public class Player {
     private List<PotentialVector> potentialVectors = new ArrayList<>();
     private int historicalActions = 0;
 
-    private Solution solution;
+    private List<Solution> solutions = new ArrayList<>();
 
     public int getxPos() {
         return xPos;
@@ -47,8 +47,8 @@ public class Player {
         return this.lessons;
     }
 
-    public Solution getSolution() {
-        return solution;
+    public List<Solution> getSolutions(){
+        return solutions;
     }
 
     public Player(int xPos, int yPos, int energy) {
@@ -81,16 +81,16 @@ public class Player {
     }
 
     private void traceSolution(){
-        solution = new Solution();
-        //List<Position> solution = new ArrayList<>();
+        Solution solution = new Solution();
         int index = lessons.size()-1;
-        while (lessons.get(index).getOldX() != 0 && lessons.get(index).getOldY() != 0){
+        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
             Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
             solution.getPositions().add(0, position);
             index--;
         }
 
         solution.getPositions().add(0,new Position(0, 0));
+        this.solutions.add(solution);
 
     }
 

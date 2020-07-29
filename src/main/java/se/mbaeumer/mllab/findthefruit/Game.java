@@ -7,8 +7,13 @@ import java.util.List;
 
 public class Game {
 
+    private int boardLength;
     private Player player;
     private String[][] chessboard;
+
+    public Game(int boardLength) {
+        this.boardLength = boardLength;
+    }
 
     public String[][] getChessboard() {
         return chessboard;
@@ -25,8 +30,8 @@ public class Game {
     }
 
     public void start() throws FileNotFoundException {
-        for (int i = 0; i< 50; i++) {
-            player.explore(chessboard, new GameStateEvaluator());
+        for (int i=0;i<50;i++) {
+            player.explore(chessboard, new GameStateEvaluator(boardLength));
             updateBoard();
             //displayBoard();
         }
@@ -40,10 +45,10 @@ public class Game {
     }
 
     private void initBoard(){
-        chessboard = new String[4][4];
+        chessboard = new String[boardLength][boardLength];
 
-        for (int i = 0; i < 4; i ++){
-            for (int j= 0; j < 4; j++){
+        for (int i=0;i<boardLength;i++){
+            for (int j=0;j<boardLength;j++){
                 chessboard[i][j] = "x";
             }
         }
@@ -55,8 +60,8 @@ public class Game {
 
     private void updateBoard(){
 
-        for (int i = 0; i < 4; i ++){
-            for (int j= 0; j < 4; j++){
+        for (int i=0;i<boardLength;i++){
+            for (int j=0;j<boardLength;j++){
                 chessboard[i][j] = "x";
             }
         }
@@ -88,8 +93,6 @@ public class Game {
         this.player.setHistoricalActions(previousActions.size());
     }
 
-
-
     private void displayBoard(){
         System.out.println("New game state");
         for (int i = 0;i<4; i++){
@@ -101,8 +104,9 @@ public class Game {
     }
 
     private void showSolution(){
-        if (player.getSolution() != null){
-            player.getSolution().getPositions().stream().forEach(position -> System.out.println(position.getX() + "," + position.getY()));
+        if (player.getSolutions().size() > 0){
+            Solution solution = player.getSolutions().get(0);
+            solution.getPositions().stream().forEach(position -> System.out.println(position.getX() + "," + position.getY()));
         }else{
             System.out.println("No solution found");
         }
