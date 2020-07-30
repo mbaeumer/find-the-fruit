@@ -4,8 +4,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class Player {
@@ -13,7 +11,7 @@ public class Player {
     private int yPos;
     private int energy;
     private String[][] chessboard;
-    private List<Action> lessons = new ArrayList();
+    private List<Action> lessons = new ArrayList<>();
     private List<PotentialVector> potentialVectors = new ArrayList<>();
     private int historicalActions = 0;
 
@@ -95,13 +93,6 @@ public class Player {
     }
 
     private Position selectNextPosition(){
-        Position nextPosition;
-
-        //for each vector
-          // previous experience?
-          // if exp == dangerous
-          // if exp == unknown
-          // if exp == not_dangerous
         List<PotentialPosition> potentialPositions = new ArrayList<>();
         for (final PotentialVector potentialVector : potentialVectors){
             potentialPositions.add(evaluateNextPosition(potentialVector));
@@ -123,15 +114,7 @@ public class Player {
     }
 
     private PotentialPosition evaluateNextPosition(final PotentialVector potentialVector){
-        PotentialPosition potentialPosition = null;
-
-        /*
-       List<Action> matchingActions = lessons.stream()
-                .filter(action -> xPos == action.getOldX() && yPos == action.getOldY()
-                && potentialVector.getX() == action.getxDelta()
-                        && potentialVector.getY() == action.getyDelta())
-                .collect(Collectors.toList());
-        */
+        PotentialPosition potentialPosition;
 
         List<Action> matchingActions = lessons.stream()
                 .filter(action -> action.getNewX() == xPos + potentialVector.getX()
@@ -147,24 +130,11 @@ public class Player {
            Position position = new Position(xPos + potentialVector.getX(), yPos + potentialVector.getY());
            potentialPosition = new PotentialPosition(position, 5);
        }
-       /*
-        if (matchingAction.isPresent()){
-            Position position = new Position(matchingAction.get().getNewX(), matchingAction.get().getNewY());
-            potentialPosition = new PotentialPosition(position, matchingAction.get().getReward());
-        }else{
-            Position position = new Position(xPos + potentialVector.getX(), yPos + potentialVector.getY());
-            potentialPosition = new PotentialPosition(position, 5);
-        }
-        */
+
         return potentialPosition;
     }
 
     private void move(final Position nextPosition, final GameStateEvaluator gameStateEvaluator) throws FileNotFoundException {
-        // public Action(int oldX, int oldY, int oldEnergy,
-        // int xDelta, int yDelta,
-        // int newX, int newY, int newEnergy,
-        // String nextPositionState, ActionResult actionResult) {
-        //gameStateEvaluator.
         Action action = new Action(xPos, yPos, energy,
                 nextPosition.getX()-xPos, nextPosition.getY()-yPos,
                 nextPosition.getX(), nextPosition.getY(), energy - 1, getNextPositionState(nextPosition),
