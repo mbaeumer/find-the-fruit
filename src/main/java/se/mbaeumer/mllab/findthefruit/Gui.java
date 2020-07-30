@@ -7,15 +7,12 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Gui extends Application {
@@ -32,7 +29,7 @@ public class Gui extends Application {
     private TextField tfBoardLength;
     private Button btnRun;
     private FlowPane flowRight;
-    private TableView tvActions;
+    private TableView tvSolution;
     private Game game;
 
     @Override
@@ -45,7 +42,6 @@ public class Gui extends Application {
         this.createConfigComponents();
         this.borderPane.setLeft(this.root);
         this.createRightFlowPane();
-        //this.createActionTableView();
         stage.setScene(this.scene);
         stage.show();
 
@@ -83,7 +79,7 @@ public class Gui extends Application {
             game.initGame();
             try {
                 game.start();
-                createActionTableView();
+                createSolutionTableView();
             }catch (FileNotFoundException ex){
 
             }
@@ -116,13 +112,15 @@ public class Gui extends Application {
 
     }
 
-    private void createActionTableView(){
-        this.tvActions = new TableView();
-        this.tvActions.setEditable(false);
-        /*
-        TODO: Populate table view
-         */
-        //this.tvActions.setItems(FXCollections.observableList(game.getPlayer().getSolution().getPositions()));
+    private void createSolutionTableView(){
+        this.tvSolution = new TableView();
+        this.tvSolution.setEditable(false);
+
+        Player player = game.getPlayer();
+
+        if (player.getSolutions().size() > 0){
+            this.tvSolution.setItems(FXCollections.observableList(player.getSolutions().get(0).getPositions()));
+        }
 
         TableColumn xCol = new TableColumn("X");
         xCol.setCellValueFactory(new PropertyValueFactory("x"));
@@ -130,14 +128,12 @@ public class Gui extends Application {
         TableColumn yCol = new TableColumn("Y");
         yCol.setCellValueFactory(new PropertyValueFactory("y"));
 
-        this.tvActions.getColumns().addAll(xCol, yCol);
+        this.tvSolution.getColumns().addAll(xCol, yCol);
 
-        this.flowRight.getChildren().add(this.tvActions);
+        this.flowRight.getChildren().add(this.tvSolution);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
-
-
 }
