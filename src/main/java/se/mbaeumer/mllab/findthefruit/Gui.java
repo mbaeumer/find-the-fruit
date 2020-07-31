@@ -2,6 +2,7 @@ package se.mbaeumer.mllab.findthefruit;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -50,6 +51,7 @@ public class Gui extends Application {
 
     private void createConfigFowPane(){
         this.flowConfig = new FlowPane();
+        this.flowConfig.setPadding(new Insets(5,5,5,5));
 
         this.borderPane.setTop(this.flowConfig);
     }
@@ -113,6 +115,7 @@ public class Gui extends Application {
         this.borderPane.setCenter(this.flowRight);
 
     }
+    
 
     private void createActionTableView(){
         this.tvActions = new TableView();
