@@ -82,8 +82,8 @@ public class Gui extends Application {
             game.initGame();
             try {
                 game.start();
-                createActionTableView();
-                createSolutionTableView();
+                populateActionTableView();
+                populateSolutionTableView();
             }catch (FileNotFoundException ex){
 
             }
@@ -115,7 +115,16 @@ public class Gui extends Application {
         this.borderPane.setCenter(this.flowRight);
 
     }
-    
+
+    private void populateActionTableView(){
+        if (this.tvActions == null){
+            createActionTableView();
+        }
+
+        Player player = game.getPlayer();
+        this.tvActions.setItems(FXCollections.observableList(player.getLessons()));
+
+    }
 
     private void createActionTableView(){
         this.tvActions = new TableView();
@@ -144,24 +153,25 @@ public class Gui extends Application {
 
         this.tvActions.getColumns().addAll(oldXCol, oldYCol, xDeltaCol, yDeltaCol, newXCol, newYCol, rewardCol);
 
-        Player player = game.getPlayer();
-
-        this.tvActions.setItems(FXCollections.observableList(player.getLessons()));
-
         this.flowRight.getChildren().add(this.tvActions);
         this.tvActions.prefWidthProperty().bind(this.flowRight.widthProperty());
-
     }
 
-    private void createSolutionTableView(){
-        this.tvSolution = new TableView();
-        this.tvSolution.setEditable(false);
+    private void populateSolutionTableView(){
+        if (tvSolution == null){
+            this.createSolutionTableView();
+        }
 
         Player player = game.getPlayer();
 
         if (player.getSolutions().size() > 0){
             this.tvSolution.setItems(FXCollections.observableList(player.getSolutions().get(0).getPositions()));
         }
+
+    }
+    private void createSolutionTableView(){
+        this.tvSolution = new TableView();
+        this.tvSolution.setEditable(false);
 
         TableColumn xCol = new TableColumn("X");
         xCol.setCellValueFactory(new PropertyValueFactory("x"));
