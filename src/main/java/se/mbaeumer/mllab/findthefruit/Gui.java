@@ -30,6 +30,7 @@ public class Gui extends Application {
     private Button btnRun;
     private FlowPane flowRight;
     private TableView tvSolution;
+    private TableView tvActions;
     private Game game;
 
     @Override
@@ -79,6 +80,7 @@ public class Gui extends Application {
             game.initGame();
             try {
                 game.start();
+                createActionTableView();
                 createSolutionTableView();
             }catch (FileNotFoundException ex){
 
@@ -106,9 +108,45 @@ public class Gui extends Application {
 
     private void createRightFlowPane(){
         this.flowRight = new FlowPane();
-        this.flowRight.setOrientation(Orientation.VERTICAL);
+        this.flowRight.setOrientation(Orientation.HORIZONTAL);
 
         this.borderPane.setCenter(this.flowRight);
+
+    }
+
+    private void createActionTableView(){
+        this.tvActions = new TableView();
+        this.tvActions.setEditable(false);
+
+        TableColumn oldXCol = new TableColumn("Old X");
+        oldXCol.setCellValueFactory(new PropertyValueFactory("oldX"));
+
+        TableColumn oldYCol = new TableColumn("Old Y");
+        oldYCol.setCellValueFactory(new PropertyValueFactory("oldY"));
+
+        TableColumn newXCol = new TableColumn("New X");
+        newXCol.setCellValueFactory(new PropertyValueFactory("newX"));
+
+        TableColumn newYCol = new TableColumn("New Y");
+        newYCol.setCellValueFactory(new PropertyValueFactory("newY"));
+
+        TableColumn xDeltaCol = new TableColumn("X delta");
+        xDeltaCol.setCellValueFactory(new PropertyValueFactory("xDelta"));
+
+        TableColumn yDeltaCol = new TableColumn("Y delta");
+        yDeltaCol.setCellValueFactory(new PropertyValueFactory("yDelta"));
+
+        TableColumn rewardCol = new TableColumn("Reward");
+        rewardCol.setCellValueFactory(new PropertyValueFactory("reward"));
+
+        this.tvActions.getColumns().addAll(oldXCol, oldYCol, xDeltaCol, yDeltaCol, newXCol, newYCol, rewardCol);
+
+        Player player = game.getPlayer();
+
+        this.tvActions.setItems(FXCollections.observableList(player.getLessons()));
+
+        this.flowRight.getChildren().add(this.tvActions);
+        this.tvActions.prefWidthProperty().bind(this.flowRight.widthProperty());
 
     }
 

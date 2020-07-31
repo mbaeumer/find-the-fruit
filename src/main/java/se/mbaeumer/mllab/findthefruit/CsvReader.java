@@ -21,8 +21,8 @@ public class CsvReader {
                 action.setOldX(Integer.parseInt(data[0]));
                 action.setOldY(Integer.parseInt(data[1]));
                 action.setOldEnergy(Integer.parseInt(data[2]));
-                action.setxDelta(Integer.parseInt(data[3]));
-                action.setyDelta(Integer.parseInt(data[4]));
+                action.setXDelta(Integer.parseInt(data[3]));
+                action.setYDelta(Integer.parseInt(data[4]));
                 action.setNewX(Integer.parseInt(data[5]));
                 action.setNewY(Integer.parseInt(data[6]));
                 action.setNewEnergy(Integer.parseInt(data[7]));

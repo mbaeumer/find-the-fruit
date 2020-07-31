@@ -24,7 +24,7 @@ public class CsvWriter {
         StringBuilder stringBuilder = new StringBuilder();
         return stringBuilder.append(action.getOldX()).append(",")
                 .append(action.getOldY()).append(",").append(action.getOldEnergy()).append(",")
-                .append(action.getxDelta()).append(",").append(action.getyDelta()).append(",")
+                .append(action.getXDelta()).append(",").append(action.getYDelta()).append(",")
                 .append(action.getNewX()).append(",").append(action.getNewY()).append(",")
                 .append(action.getNewEnergy()).append(",").append(action.getNextPositionState()).append(",")
                 .append(action.getReward()).toString();
