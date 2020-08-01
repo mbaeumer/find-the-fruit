@@ -87,6 +87,8 @@ public class Player {
             index--;
         }
 
+        Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
+        solution.getPositions().add(0, position);
         solution.getPositions().add(0,new Position(0, 0));
         this.solutions.add(solution);
 
