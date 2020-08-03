@@ -1,6 +1,7 @@
 package se.mbaeumer.mllab.findthefruit;
 
 import javafx.application.Application;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -29,10 +30,12 @@ public class Gui extends Application {
     private Label lblBoardLength;
     private TextField tfBoardLength;
     private Button btnRun;
+    private Label lblStatus;
     private FlowPane flowRight;
     private TableView tvSolution;
     private TableView tvActions;
     private Game game;
+    private ConfigValidationService configValidationService = new ConfigValidationService();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -61,16 +64,16 @@ public class Gui extends Application {
         this.flowConfig.getChildren().add(this.lblBoardLength);
         this.tfBoardLength = new TextField();
         this.tfBoardLength.textProperty().addListener((observable, oldValue, newValue) -> {
+            hideErrorMessage();
             try {
-                int length = Integer.parseInt(newValue);
-                if (length < 4 || length > 15){
-
-                }else{
-                    initBoard(length);
-                }
+                int length = configValidationService.validateBoardLength(newValue);
+                initBoard(length);
             }catch (NumberFormatException ex){
+                showErrorMessage(ex.getMessage());
                 this.root.getChildren().clear();
-
+            }catch (IllegalArgumentException ex){
+                showErrorMessage(ex.getMessage());
+                this.root.getChildren().clear();
             }
         });
         this.flowConfig.getChildren().add(this.tfBoardLength);
@@ -78,19 +81,39 @@ public class Gui extends Application {
         this.btnRun = new Button("Run");
 
         this.btnRun.setOnAction(actionEvent -> {
-            game = new Game(4);
-            game.initGame();
             try {
-                game.start();
-                populateActionTableView();
-                populateSolutionTableView();
-            }catch (FileNotFoundException ex){
+                game = new Game(configValidationService.validateBoardLength(tfBoardLength.getText()));
+                game.initGame();
+                try {
+                    game.start();
+                    populateActionTableView();
+                    populateSolutionTableView();
+                } catch (FileNotFoundException ex) {
 
+                }
+            }catch (NumberFormatException ex){
+                showErrorMessage(ex.getMessage());
+            }catch (IllegalArgumentException ex){
+                showErrorMessage(ex.getMessage());
             }
         });
 
         this.flowConfig.getChildren().add(btnRun);
     }
+
+    private void showErrorMessage(final String message){
+        this.lblStatus = new Label(message);
+        this.flowConfig.getChildren().add(this.lblStatus);
+    }
+
+    private void hideErrorMessage(){
+        if (this.flowConfig.getChildren().contains(this.lblStatus)) {
+            this.flowConfig.getChildren().remove(this.lblStatus);
+        }
+    }
+
+
+
 
     private void initBoard(final int length){
         this.root.getChildren().clear();
