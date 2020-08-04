@@ -10,4 +10,14 @@ public class ConfigValidationService {
         }
         return boardLength;
     }
+
+    public Position validateFruitPosition(final String coordinates, int boardLength){
+        String[] pos = coordinates.split(",");
+        int x = Integer.parseInt(pos[0]);
+        int y = Integer.parseInt(pos[1]);
+        if (x > boardLength || x < 0 || y > boardLength || y < 0){
+            throw new IllegalArgumentException("Wrong value");
+        }
+        return new Position(x, y);
+    }
 }

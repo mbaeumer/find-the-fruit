@@ -1,5 +1,7 @@
 package se.mbaeumer.mllab.findthefruit;
 
+import javafx.geometry.Pos;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,9 +12,11 @@ public class Game {
     private int boardLength;
     private Player player;
     private String[][] chessboard;
+    private Position fruitPosition;
 
-    public Game(int boardLength) {
+    public Game(final int boardLength, final Position fruitPosition) {
         this.boardLength = boardLength;
+        this.fruitPosition = fruitPosition;
     }
 
     public String[][] getChessboard() {
@@ -54,8 +58,7 @@ public class Game {
         }
 
         chessboard[0][0] = "p";
-        chessboard[2][3] = "f";
-
+        chessboard[fruitPosition.getY()][fruitPosition.getX()] = "f";
     }
 
     private void updateBoard(){
@@ -72,7 +75,7 @@ public class Game {
             System.out.println("Invalid player position: " + player.getyPos() + "," + player.getxPos());
         }
 
-        chessboard[2][3] = "f";
+        chessboard[fruitPosition.getY()][fruitPosition.getX()] = "f";
 
     }
 

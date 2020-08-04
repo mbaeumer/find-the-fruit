@@ -22,6 +22,8 @@ public class Gui extends Application {
     private static int LENGTH = 10;
     private static int XSTART = 50;
     private static int YSTART = 50;
+    private static String DEFAULT_FRUIT_POS = "2,3";
+    private static String DEFAULT_BOARD_LENGTH = "4";
 
     private BorderPane borderPane;
     private Group root = new Group();
@@ -29,6 +31,8 @@ public class Gui extends Application {
     private FlowPane flowConfig;
     private Label lblBoardLength;
     private TextField tfBoardLength;
+    private Label lblFruitPos;
+    private TextField tfFruitPos;
     private Button btnRun;
     private Label lblStatus;
     private FlowPane flowRight;
@@ -55,6 +59,7 @@ public class Gui extends Application {
     private void createConfigFowPane(){
         this.flowConfig = new FlowPane();
         this.flowConfig.setPadding(new Insets(5,5,5,5));
+        this.flowConfig.setHgap(5);
 
         this.borderPane.setTop(this.flowConfig);
     }
@@ -63,6 +68,7 @@ public class Gui extends Application {
         this.lblBoardLength = new Label("Length: ");
         this.flowConfig.getChildren().add(this.lblBoardLength);
         this.tfBoardLength = new TextField();
+        this.tfBoardLength.setText(DEFAULT_BOARD_LENGTH);
         this.tfBoardLength.textProperty().addListener((observable, oldValue, newValue) -> {
             hideErrorMessage();
             try {
@@ -78,11 +84,24 @@ public class Gui extends Application {
         });
         this.flowConfig.getChildren().add(this.tfBoardLength);
 
+        this.lblFruitPos = new Label("Fruit pos:");
+        this.flowConfig.getChildren().add(this.lblFruitPos);
+        this.tfFruitPos = new TextField();
+        this.tfFruitPos.setText(DEFAULT_FRUIT_POS);
+        this.tfFruitPos.textProperty().addListener((observable, oldValue, newValue) -> {
+           hideErrorMessage();
+           try {
+               configValidationService.validateFruitPosition(tfFruitPos.getText(), Integer.parseInt(tfBoardLength.getText()));
+           }catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
+               showErrorMessage(ex.getMessage());
+           }
+        });
+        this.flowConfig.getChildren().add(this.tfFruitPos);
         this.btnRun = new Button("Run");
-
         this.btnRun.setOnAction(actionEvent -> {
             try {
-                game = new Game(configValidationService.validateBoardLength(tfBoardLength.getText()));
+                game = new Game(configValidationService.validateBoardLength(tfBoardLength.getText()),
+                        configValidationService.validateFruitPosition(tfFruitPos.getText(), Integer.parseInt(tfBoardLength.getText())));
                 game.initGame();
                 try {
                     game.start();
@@ -111,9 +130,6 @@ public class Gui extends Application {
             this.flowConfig.getChildren().remove(this.lblStatus);
         }
     }
-
-
-
 
     private void initBoard(final int length){
         this.root.getChildren().clear();
