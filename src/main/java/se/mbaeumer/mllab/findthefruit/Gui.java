@@ -42,6 +42,7 @@ public class Gui extends Application {
     private FlowPane flowRight;
     private TableView tvSolution;
     private TableView tvActions;
+    private Label lblSolutionStatus;
     private Game game;
     private ConfigValidationService configValidationService = new ConfigValidationService();
 
@@ -121,6 +122,7 @@ public class Gui extends Application {
                     game.start();
                     populateActionTableView();
                     populateSolutionTableView();
+                    //createSolutionStatus();
                 } catch (FileNotFoundException ex) {
 
                 }
@@ -233,8 +235,17 @@ public class Gui extends Application {
         yCol.setCellValueFactory(new PropertyValueFactory("y"));
 
         this.tvSolution.getColumns().addAll(xCol, yCol);
+        this.tvSolution.setPrefHeight(200);
 
         this.flowRight.getChildren().add(this.tvSolution);
+    }
+
+    private void createSolutionStatus(){
+        if (this.lblSolutionStatus == null) {
+            this.lblSolutionStatus = new Label("Solution");
+            this.flowRight.getChildren().add(this.lblSolutionStatus);
+            this.lblSolutionStatus.prefWidthProperty().bind(this.flowRight.widthProperty());
+        }
     }
 
     public static void main(String[] args) {
