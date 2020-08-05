@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 public class GameStateEvaluator {
 
     private int boardLength = 0;
+    private Position fruitPosition;
 
-    public GameStateEvaluator(int boardLength) {
+    public GameStateEvaluator(final int boardLength, final Position fruitPosition) {
         this.boardLength = boardLength;
+        this.fruitPosition = fruitPosition;
     }
 
     public ActionResult calculateGameState(List<Action> lessons, final Position position, final int energy){
@@ -16,7 +18,7 @@ public class GameStateEvaluator {
         if (isInvalidPosition(position) || energy <= 0 || isStepBack(lessons,position)){
             // GAME OVER
             actionResult = ActionResult.DEAD;
-        }else if (position.getY() == 2 && position.getX() == 3){
+        }else if (position.getY() == fruitPosition.getY() && position.getX() == fruitPosition.getX()){
             System.out.println("THE PLAYER FOUND THE FRUIT!!!");
             actionResult = ActionResult.SUCCESS;
         }
@@ -32,7 +34,7 @@ public class GameStateEvaluator {
             return -1000;
         }else if (isStepBack(lessons, position)){
             reward = -500;
-        }else if (position.getY() == 2 && position.getX() == 3){
+        }else if (position.getY() == fruitPosition.getY() && position.getX() == fruitPosition.getX()){
             return 1000;
         }
 

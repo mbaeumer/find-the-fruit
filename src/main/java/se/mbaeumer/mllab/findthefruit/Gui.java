@@ -3,6 +3,7 @@ package se.mbaeumer.mllab.findthefruit;
 import javafx.application.Application;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
@@ -16,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class Gui extends Application {
 
@@ -33,6 +35,8 @@ public class Gui extends Application {
     private TextField tfBoardLength;
     private Label lblFruitPos;
     private TextField tfFruitPos;
+    private Label lblIterations;
+    private ComboBox<String> cmbIterations;
     private Button btnRun;
     private Label lblStatus;
     private FlowPane flowRight;
@@ -97,11 +101,21 @@ public class Gui extends Application {
            }
         });
         this.flowConfig.getChildren().add(this.tfFruitPos);
+
+        List<String> list = List.of("10", "50", "100", "1000");
+        this.lblIterations = new Label("Iterations:");
+        this.flowConfig.getChildren().add(this.lblIterations);
+        this.cmbIterations = new ComboBox<>();
+        this.cmbIterations.setItems(FXCollections.observableArrayList(list));
+        this.cmbIterations.getSelectionModel().selectFirst();
+        this.flowConfig.getChildren().add(this.cmbIterations);
+
         this.btnRun = new Button("Run");
         this.btnRun.setOnAction(actionEvent -> {
             try {
                 game = new Game(configValidationService.validateBoardLength(tfBoardLength.getText()),
-                        configValidationService.validateFruitPosition(tfFruitPos.getText(), Integer.parseInt(tfBoardLength.getText())));
+                        configValidationService.validateFruitPosition(tfFruitPos.getText(), Integer.parseInt(tfBoardLength.getText())),
+                        Integer.parseInt(cmbIterations.getValue()));
                 game.initGame();
                 try {
                     game.start();
@@ -150,6 +164,7 @@ public class Gui extends Application {
     private void createRightFlowPane(){
         this.flowRight = new FlowPane();
         this.flowRight.setOrientation(Orientation.HORIZONTAL);
+        this.flowRight.s
 
         this.borderPane.setCenter(this.flowRight);
 

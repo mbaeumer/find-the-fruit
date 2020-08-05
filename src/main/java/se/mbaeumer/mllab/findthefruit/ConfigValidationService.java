@@ -15,7 +15,7 @@ public class ConfigValidationService {
         String[] pos = coordinates.split(",");
         int x = Integer.parseInt(pos[0]);
         int y = Integer.parseInt(pos[1]);
-        if (x > boardLength || x < 0 || y > boardLength || y < 0){
+        if (x > boardLength || x < 1 || y > boardLength || y < 1){
             throw new IllegalArgumentException("Wrong value");
         }
         return new Position(x, y);

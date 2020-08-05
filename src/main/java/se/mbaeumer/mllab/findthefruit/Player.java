@@ -164,6 +164,6 @@ public class Player {
     private void reset(){
         this.xPos = 0;
         this.yPos = 0;
-        this.energy = 10;
+        this.energy = 15;
     }
 }

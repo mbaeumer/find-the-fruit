@@ -13,10 +13,12 @@ public class Game {
     private Player player;
     private String[][] chessboard;
     private Position fruitPosition;
+    private int iterations;
 
-    public Game(final int boardLength, final Position fruitPosition) {
+    public Game(final int boardLength, final Position fruitPosition, final int iterations) {
         this.boardLength = boardLength;
         this.fruitPosition = fruitPosition;
+        this.iterations = iterations;
     }
 
     public String[][] getChessboard() {
@@ -34,8 +36,8 @@ public class Game {
     }
 
     public void start() throws FileNotFoundException {
-        for (int i=0;i<50;i++) {
-            player.explore(chessboard, new GameStateEvaluator(boardLength));
+        for (int i=0;i<iterations;i++) {
+            player.explore(chessboard, new GameStateEvaluator(boardLength, fruitPosition));
             updateBoard();
             //displayBoard();
         }
@@ -58,7 +60,7 @@ public class Game {
         }
 
         chessboard[0][0] = "p";
-        chessboard[fruitPosition.getY()][fruitPosition.getX()] = "f";
+        chessboard[fruitPosition.getY() - 1][fruitPosition.getX() - 1] = "f";
     }
 
     private void updateBoard(){
@@ -75,12 +77,12 @@ public class Game {
             System.out.println("Invalid player position: " + player.getyPos() + "," + player.getxPos());
         }
 
-        chessboard[fruitPosition.getY()][fruitPosition.getX()] = "f";
+        chessboard[fruitPosition.getY() - 1][fruitPosition.getX() - 1] = "f";
 
     }
 
     private void initPlayer(){
-        this.player = new Player(0, 0, 10);
+        this.player = new Player(0, 0, 15);
     }
 
     private void initData(){
