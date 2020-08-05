@@ -164,7 +164,6 @@ public class Gui extends Application {
     private void createRightFlowPane(){
         this.flowRight = new FlowPane();
         this.flowRight.setOrientation(Orientation.HORIZONTAL);
-        this.flowRight.s
 
         this.borderPane.setCenter(this.flowRight);
 
