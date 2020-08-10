@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class Player {
@@ -68,7 +70,7 @@ public class Player {
         Position nextPosition = selectNextPosition();
         move(nextPosition, gameStateEvaluator);
         Action latestAction = lessons.get(lessons.size()-1);
-        if (latestAction.getReward() == -1000){
+        if (latestAction.getReward() == -100000 || energy == 0){
             reset();
         }else if (latestAction.getReward() == 1000){
             traceSolution();
@@ -102,9 +104,26 @@ public class Player {
 
         printAlternatives(potentialPositions);
 
-        PotentialPosition bestPosition = potentialPositions.stream().max(Comparator.comparing(PotentialPosition::getReward)).get();
+        int i = 0;
+        boolean allTheSame = true;
+        for (int j=1; j < potentialPositions.size(); j++){
+            if (potentialPositions.get(i).getReward() != potentialPositions.get(j).getReward()){
+                allTheSame = false;
+            }
+        }
+        PotentialPosition bestPosition;
+        if (!allTheSame){
+            bestPosition = potentialPositions.stream().max(Comparator.comparing(PotentialPosition::getReward)).get();
+        }else{
+            Random random = new Random();
+            int rand = ThreadLocalRandom.current().nextInt(0,potentialPositions.size());
+            bestPosition = potentialPositions.get(rand);
+        }
+
         return bestPosition.getPosition();
     }
+
+
 
     private void printAlternatives(List<PotentialPosition> potentialPositions){
         String s = "";
@@ -119,7 +138,8 @@ public class Player {
         PotentialPosition potentialPosition;
 
         List<Action> matchingActions = lessons.stream()
-                .filter(action -> action.getNewX() == xPos + potentialVector.getX()
+                .filter(action -> action.getOldX() == xPos && action.getOldY() == yPos
+                        && action.getNewX() == xPos + potentialVector.getX()
                         && action.getNewY() == yPos + potentialVector.getY())
                 .collect(Collectors.toList());
 

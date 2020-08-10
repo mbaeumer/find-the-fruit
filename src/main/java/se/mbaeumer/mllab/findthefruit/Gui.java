@@ -155,8 +155,8 @@ public class Gui extends Application {
         for (int i = 0; i < length ; i++){
             for (int j = 0; j < length; j++){
                 Label label = new Label("X");
-                label.setLayoutX(XSTART *(j+1));
-                label.setLayoutY(YSTART *(i+1));
+                label.setLayoutX(XSTART + 25*(j+1));
+                label.setLayoutY(YSTART + 25*(i+1));
                 label.setEffect(dropShadow);
                 root.getChildren().add(label);
             }

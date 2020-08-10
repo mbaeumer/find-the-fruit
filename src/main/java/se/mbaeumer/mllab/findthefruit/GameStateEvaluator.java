@@ -30,18 +30,49 @@ public class GameStateEvaluator {
     public int calculateReward(final List<Action> lessons, final Position position, final int energy){
         int reward = 0;
 
-        if (isInvalidPosition(position) || energy <= 0){
-            return -1000;
-        }else if (isStepBack(lessons, position)){
-            reward = -500;
+        if (isInvalidPosition(position)){
+            return -100000;
+        }else if (energy <= 0){
+            return -500;
+        }else if (getVisits(lessons, position) > 0){
+            reward = -500 - (getVisits(lessons, position) * 2);
         }else if (position.getY() == fruitPosition.getY() && position.getX() == fruitPosition.getX()){
             return 1000;
         }
 
-        int numberOfVisits = lessons.stream().filter(action -> action.getNewX() == position.getX() && action.getNewY() == position.getY())
-                .collect(Collectors.toList()).size();
-        reward = reward - (numberOfVisits * 5);
+        /*
+        int index = lessons.size() - 1;
+        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
+
+
+            index--;
+        }
+        */
+        //int numberOfVisits = lessons.stream().filter(action -> action.getNewX() == position.getX() && action.getNewY() == position.getY())
+          //      .collect(Collectors.toList()).size();
+        //reward = reward - (numberOfVisits * 2);
         return reward;
+    }
+
+    private int getVisits(List<Action> lessons, final Position position){
+        int visits = 0;
+
+        if (lessons.size() < 2){
+            if (position.getX() == 0 && position.getY() == 0){
+                return 1;
+            }
+        }
+        int index = lessons.size() - 1;
+        //while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
+        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
+            if (lessons.get(index).getOldX() == position.getX() && lessons.get(index).getOldY() == position.getY()){
+                visits++;
+            }
+            index--;
+        }
+
+
+        return visits;
     }
 
     private boolean isStepBack(List<Action> lessons, final Position position){
@@ -52,7 +83,8 @@ public class GameStateEvaluator {
             }
         }
         int index = lessons.size() - 1;
-        while (lessons.get(index).getOldX() != 0 && lessons.get(index).getOldY() !=0){
+        //while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
+        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
             if (lessons.get(index).getOldX() == position.getX() && lessons.get(index).getOldY() == position.getY()){
                 result = true;
             }
