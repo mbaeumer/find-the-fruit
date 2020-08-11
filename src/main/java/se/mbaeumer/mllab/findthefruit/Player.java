@@ -70,7 +70,7 @@ public class Player {
         Position nextPosition = selectNextPosition();
         move(nextPosition, gameStateEvaluator);
         Action latestAction = lessons.get(lessons.size()-1);
-        if (latestAction.getReward() == -100000 || energy == 0){
+        if (latestAction.getReward() == -100000){
             reset();
         }else if (latestAction.getReward() == 1000){
             traceSolution();

@@ -32,10 +32,12 @@ public class GameStateEvaluator {
 
         if (isInvalidPosition(position)){
             return -100000;
-        }else if (energy <= 0){
-            return -500;
+        }/*else if (energy <= 0){
+            return -100000;
+        }*/else if (isStepBack(lessons, position)){
+            return -100000;
         }else if (getVisits(lessons, position) > 0){
-            reward = -500 - (getVisits(lessons, position) * 2);
+            reward = -500 - (getVisits(lessons, position) * 50);
         }else if (position.getY() == fruitPosition.getY() && position.getX() == fruitPosition.getX()){
             return 1000;
         }
@@ -57,7 +59,10 @@ public class GameStateEvaluator {
     private int getVisits(List<Action> lessons, final Position position){
         int visits = 0;
 
-        if (lessons.size() < 2){
+        if (lessons.size() == 0){
+            return 0;
+        }
+        if (lessons.size() <= 2){
             if (position.getX() == 0 && position.getY() == 0){
                 return 1;
             }
@@ -71,24 +76,27 @@ public class GameStateEvaluator {
             index--;
         }
 
+        if (lessons.get(index).getOldX() == position.getX() && lessons.get(index).getOldY() == position.getY()){
+            visits++;
+        }
+
 
         return visits;
     }
 
     private boolean isStepBack(List<Action> lessons, final Position position){
         boolean result = false;
-        if (lessons.size() < 2){
-            if (position.getX() == 0 && position.getY() == 0){
+        if (lessons.size() <=1){
+            return false;
+        }
+        if (lessons.size() == 2){
+            if (position.getX() == lessons.get(0).getOldX() && position.getY() == lessons.get(0).getOldY()){
                 return true;
             }
         }
-        int index = lessons.size() - 1;
-        //while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
-        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
-            if (lessons.get(index).getOldX() == position.getX() && lessons.get(index).getOldY() == position.getY()){
-                result = true;
-            }
-            index--;
+        int index = lessons.size() - 2;
+        if (lessons.get(index).getOldX() == position.getX() && lessons.get(index).getOldY() == position.getY()){
+            result = true;
         }
 
         return result;
