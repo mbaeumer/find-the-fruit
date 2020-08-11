@@ -30,14 +30,15 @@ public class GameStateEvaluator {
     public int calculateReward(final List<Action> lessons, final Position position, final int energy){
         int reward = 0;
 
+        int visits = getVisits(lessons, position);
         if (isInvalidPosition(position)){
             return -100000;
         }/*else if (energy <= 0){
             return -100000;
         }*/else if (isStepBack(lessons, position)){
             return -100000;
-        }else if (getVisits(lessons, position) > 0){
-            reward = -500 - (getVisits(lessons, position) * 50);
+        }else if ( visits > 0){
+            reward = -500 - visits * 50;
         }else if (position.getY() == fruitPosition.getY() && position.getX() == fruitPosition.getX()){
             return 1000;
         }
