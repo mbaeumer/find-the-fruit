@@ -17,8 +17,6 @@ public class Player {
     private List<PotentialVector> potentialVectors = new ArrayList<>();
     private int historicalActions = 0;
 
-    private List<Solution> solutions = new ArrayList<>();
-
     public int getxPos() {
         return xPos;
     }
@@ -47,10 +45,6 @@ public class Player {
         return this.lessons;
     }
 
-    public List<Solution> getSolutions(){
-        return solutions;
-    }
-
     public Player(int xPos, int yPos, int energy) {
         this.xPos = xPos;
         this.yPos = yPos;
@@ -73,27 +67,15 @@ public class Player {
         if (latestAction.getReward() == -100000){
             reset();
         }else if (latestAction.getReward() == 1000){
-            traceSolution();
+            traceSolution(gameStateEvaluator);
             reset();
         }
         CsvWriter csvWriter = new CsvWriter();
         csvWriter.writeActions(lessons);
     }
 
-    private void traceSolution(){
-        Solution solution = new Solution();
-        int index = lessons.size()-1;
-        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
-            Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
-            solution.getPositions().add(0, position);
-            index--;
-        }
-
-        Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
-        solution.getPositions().add(0, position);
-        solution.getPositions().add(0,new Position(0, 0));
-        this.solutions.add(solution);
-
+    private void traceSolution(final GameStateEvaluator gameStateEvaluator){
+        gameStateEvaluator.traceSolution(lessons);
     }
 
     private Position selectNextPosition(){

@@ -1,5 +1,6 @@
 package se.mbaeumer.mllab.findthefruit;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,10 +8,15 @@ public class GameStateEvaluator {
 
     private int boardLength = 0;
     private Position fruitPosition;
+    private List<Solution> solutions = new ArrayList<>();
 
     public GameStateEvaluator(final int boardLength, final Position fruitPosition) {
         this.boardLength = boardLength;
         this.fruitPosition = fruitPosition;
+    }
+
+    public List<Solution> getSolutions() {
+        return solutions;
     }
 
     public ActionResult calculateGameState(List<Action> lessons, final Position position, final int energy){
@@ -105,5 +111,21 @@ public class GameStateEvaluator {
 
     private boolean isInvalidPosition(final Position position){
         return position.getX() < 0 || position.getX() >= boardLength || position.getY() < 0 || position.getY() >= boardLength;
+    }
+
+    public void traceSolution(final List<Action> lessons){
+        Solution solution = new Solution();
+        int index = lessons.size()-1;
+        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
+            Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
+            solution.getPositions().add(0, position);
+            index--;
+        }
+
+        Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
+        solution.getPositions().add(0, position);
+        solution.getPositions().add(0,new Position(0, 0));
+        this.solutions.add(solution);
+
     }
 }

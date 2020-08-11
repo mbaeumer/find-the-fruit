@@ -14,11 +14,16 @@ public class Game {
     private String[][] chessboard;
     private Position fruitPosition;
     private int iterations;
+    private GameStateEvaluator gameStateEvaluator;
 
     public Game(final int boardLength, final Position fruitPosition, final int iterations) {
         this.boardLength = boardLength;
         this.fruitPosition = fruitPosition;
         this.iterations = iterations;
+    }
+
+    public GameStateEvaluator getGameStateEvaluator() {
+        return gameStateEvaluator;
     }
 
     public String[][] getChessboard() {
@@ -36,8 +41,9 @@ public class Game {
     }
 
     public void start() throws FileNotFoundException {
+        gameStateEvaluator = new GameStateEvaluator(boardLength, fruitPosition);
         for (int i=0;i<iterations;i++) {
-            player.explore(chessboard, new GameStateEvaluator(boardLength, fruitPosition));
+            player.explore(chessboard, gameStateEvaluator);
             updateBoard();
             //displayBoard();
         }
@@ -109,8 +115,8 @@ public class Game {
     }
 
     private void showSolution(){
-        if (player.getSolutions().size() > 0){
-            Solution solution = player.getSolutions().get(0);
+        if (gameStateEvaluator.getSolutions().size() > 0){
+            Solution solution = gameStateEvaluator.getSolutions().get(0);
             solution.getPositions().stream().forEach(position -> System.out.println(position.getX() + "," + position.getY()));
         }else{
             System.out.println("No solution found");

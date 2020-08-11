@@ -217,10 +217,10 @@ public class Gui extends Application {
             this.createSolutionTableView();
         }
 
-        Player player = game.getPlayer();
+        GameStateEvaluator gameStateEvaluator = game.getGameStateEvaluator();
 
-        if (player.getSolutions().size() > 0){
-            this.tvSolution.setItems(FXCollections.observableList(player.getSolutions().get(0).getPositions()));
+        if (gameStateEvaluator.getSolutions().size() > 0){
+            this.tvSolution.setItems(FXCollections.observableList(gameStateEvaluator.getSolutions().get(0).getPositions()));
         }
 
     }
