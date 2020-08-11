@@ -60,7 +60,7 @@ public class Game {
         }
 
         chessboard[0][0] = "p";
-        chessboard[fruitPosition.getY() - 1][fruitPosition.getX() - 1] = "f";
+        chessboard[fruitPosition.getY()][fruitPosition.getX()] = "f";
     }
 
     private void updateBoard(){
@@ -77,7 +77,7 @@ public class Game {
             System.out.println("Invalid player position: " + player.getyPos() + "," + player.getxPos());
         }
 
-        chessboard[fruitPosition.getY() - 1][fruitPosition.getX() - 1] = "f";
+        chessboard[fruitPosition.getY()][fruitPosition.getX()] = "f";
 
     }
 
