@@ -2,6 +2,8 @@ package se.mbaeumer.mllab.findthefruit;
 
 import javafx.application.Application;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -17,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Gui extends Application {
@@ -42,6 +45,7 @@ public class Gui extends Application {
     private FlowPane flowRight;
     private TableView tvSolution;
     private TableView tvActions;
+    private ComboBox cmbSolutions;
     private Label lblSolutionStatus;
     private Game game;
     private ConfigValidationService configValidationService = new ConfigValidationService();
@@ -121,6 +125,7 @@ public class Gui extends Application {
                 try {
                     game.start();
                     populateActionTableView();
+                    populateSolutionsCombobox();
                     populateSolutionTableView();
                     //createSolutionStatus();
                 } catch (FileNotFoundException ex) {
@@ -212,6 +217,54 @@ public class Gui extends Application {
         this.tvActions.prefWidthProperty().bind(this.flowRight.widthProperty());
     }
 
+    private void populateSolutionsCombobox(){
+        if (this.cmbSolutions == null){
+            this.cmbSolutions = new ComboBox();
+            this.flowRight.getChildren().add(this.cmbSolutions);
+            this.cmbSolutions.prefWidthProperty().bind(this.flowRight.widthProperty());
+            this.cmbSolutions.valueProperty().addListener((observable, oldValue, newValue) -> {
+                this.tvSolution.getItems().clear();
+                /*
+                GameStateEvaluator gameStateEvaluator = game.getGameStateEvaluator();
+                System.out.println("Solutions: " + gameStateEvaluator.getSolutions().size());
+                System.out.println("Pos: " + gameStateEvaluator.getSolutions().get(this.cmbSolutions.getSelectionModel().getSelectedIndex()).getPositions().size());
+                System.out.println("selected " + this.cmbSolutions.getSelectionModel().getSelectedIndex());
+                */
+                populateSolutionTableView();
+                //this.tvSolution.setItems(FXCollections.observableList(gameStateEvaluator.getSolutions()
+                        //.get(0).getPositions()));
+
+            });
+            /*this.cmbSolutions.valueProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue observableValue, Object o, Object t1) {
+
+                }
+            });
+            */
+        }
+
+        this.cmbSolutions.getItems().clear();
+
+        GameStateEvaluator gameStateEvaluator = game.getGameStateEvaluator();
+        if (gameStateEvaluator.getSolutions().size() > 0){
+            this.cmbSolutions.setDisable(false);
+            List<String> solutionStrings = new ArrayList<>();
+            for (int i = 0; i < gameStateEvaluator.getSolutions().size(); i++){
+                solutionStrings.add("Solution " + i);
+            }
+            System.out.println("Solutions: " + gameStateEvaluator.getSolutions().size());
+            this.cmbSolutions.setItems(FXCollections.observableArrayList(solutionStrings));
+        }else{
+            this.cmbSolutions.setDisable(true);
+        }
+
+
+
+    }
+
+
+
     private void populateSolutionTableView(){
         if (tvSolution == null){
             this.createSolutionTableView();
@@ -220,7 +273,8 @@ public class Gui extends Application {
         GameStateEvaluator gameStateEvaluator = game.getGameStateEvaluator();
 
         if (gameStateEvaluator.getSolutions().size() > 0){
-            this.tvSolution.setItems(FXCollections.observableList(gameStateEvaluator.getSolutions().get(0).getPositions()));
+            this.tvSolution.setItems(FXCollections
+                    .observableArrayList(gameStateEvaluator.getSolutions().get(cmbSolutions.getSelectionModel().getSelectedIndex()).getPositions()));
         }
 
     }

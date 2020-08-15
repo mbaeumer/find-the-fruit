@@ -125,7 +125,19 @@ public class GameStateEvaluator {
         Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
         solution.getPositions().add(0, position);
         solution.getPositions().add(0,new Position(0, 0));
-        this.solutions.add(solution);
+        if (isUnique(solution)) {
+            this.solutions.add(solution);
+        }
 
+    }
+
+    private boolean isUnique(final Solution solution){
+        for (Solution solution1:solutions){
+            if (solution1.equals(solution)){
+                return false;
+            }
+        }
+
+        return true;
     }
 }
