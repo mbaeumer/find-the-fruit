@@ -9,6 +9,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class Player {
+    private int xStart;
+    private int yStart;
     private int xPos;
     private int yPos;
     private int energy;
@@ -23,6 +25,14 @@ public class Player {
 
     public int getyPos() {
         return yPos;
+    }
+
+    public int getxStart() {
+        return xStart;
+    }
+
+    public int getyStart() {
+        return yStart;
     }
 
     public int getEnergy() {
@@ -46,6 +56,8 @@ public class Player {
     }
 
     public Player(int xPos, int yPos, int energy) {
+        this.xStart = xPos;
+        this.yStart = yPos;
         this.xPos = xPos;
         this.yPos = yPos;
         this.energy = energy;
@@ -75,7 +87,7 @@ public class Player {
     }
 
     private void traceSolution(final GameStateEvaluator gameStateEvaluator){
-        gameStateEvaluator.traceSolution(lessons);
+        gameStateEvaluator.traceSolution(lessons, new Position(xStart, yStart));
     }
 
     private Position selectNextPosition(){
@@ -142,7 +154,7 @@ public class Player {
         Action action = new Action(xPos, yPos, energy,
                 nextPosition.getX()-xPos, nextPosition.getY()-yPos,
                 nextPosition.getX(), nextPosition.getY(), energy - 1, getNextPositionState(nextPosition),
-                gameStateEvaluator.calculateReward(lessons, nextPosition, energy -1));
+                gameStateEvaluator.calculateReward(lessons, nextPosition, energy -1, new Position(xStart, yStart)));
         xPos = nextPosition.getX();
         yPos = nextPosition.getY();
         energy--;
@@ -164,8 +176,8 @@ public class Player {
     }
 
     private void reset(){
-        this.xPos = 0;
-        this.yPos = 0;
+        this.xPos = this.xStart;
+        this.yPos = this.yStart;
         this.energy = 15;
     }
 }

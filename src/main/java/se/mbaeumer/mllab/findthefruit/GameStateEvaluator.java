@@ -19,33 +19,19 @@ public class GameStateEvaluator {
         return solutions;
     }
 
-    public ActionResult calculateGameState(List<Action> lessons, final Position position, final int energy){
-        ActionResult actionResult = ActionResult.ALIVE;
-        if (isInvalidPosition(position) || energy <= 0 || isStepBack(lessons,position)){
-            // GAME OVER
-            actionResult = ActionResult.DEAD;
-        }else if (position.getY() == fruitPosition.getY() && position.getX() == fruitPosition.getX()){
-            System.out.println("THE PLAYER FOUND THE FRUIT!!!");
-            actionResult = ActionResult.SUCCESS;
-        }
-
-        return actionResult;
-
-    }
-
-    public int calculateReward(final List<Action> lessons, final Position position, final int energy){
+    public int calculateReward(final List<Action> lessons, final Position latestPosition, final int energy, final Position playerStartPosition){
         int reward = 0;
 
-        int visits = getVisits(lessons, position);
-        if (isInvalidPosition(position)){
+        int visits = getVisits(lessons, latestPosition, playerStartPosition);
+        if (isInvalidPosition(latestPosition)){
             return -100000;
         }/*else if (energy <= 0){
             return -100000;
-        }*/else if (isStepBack(lessons, position)){
+        }*/else if (isStepBack(lessons, latestPosition)){
             return -100000;
         }else if ( visits > 0){
             reward = -500 - visits * 50;
-        }else if (position.getY() == fruitPosition.getY() && position.getX() == fruitPosition.getX()){
+        }else if (latestPosition.getY() == fruitPosition.getY() && latestPosition.getX() == fruitPosition.getX()){
             return 1000;
         }
 
@@ -63,27 +49,28 @@ public class GameStateEvaluator {
         return reward;
     }
 
-    private int getVisits(List<Action> lessons, final Position position){
+    private int getVisits(List<Action> lessons, final Position latestPosition, final Position playerStartPosition){
         int visits = 0;
 
         if (lessons.size() == 0){
             return 0;
         }
         if (lessons.size() <= 2){
-            if (position.getX() == 0 && position.getY() == 0){
+            if (latestPosition.getX() == playerStartPosition.getX() && latestPosition.getY() == playerStartPosition.getY()){
                 return 1;
             }
         }
         int index = lessons.size() - 1;
+
         //while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
-        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
-            if (lessons.get(index).getOldX() == position.getX() && lessons.get(index).getOldY() == position.getY()){
+        while (!(lessons.get(index).getOldX() == playerStartPosition.getX() && lessons.get(index).getOldY() == playerStartPosition.getY())){
+            if (lessons.get(index).getOldX() == latestPosition.getX() && lessons.get(index).getOldY() == latestPosition.getY()){
                 visits++;
             }
             index--;
         }
 
-        if (lessons.get(index).getOldX() == position.getX() && lessons.get(index).getOldY() == position.getY()){
+        if (lessons.get(index).getOldX() == latestPosition.getX() && lessons.get(index).getOldY() == latestPosition.getY()){
             visits++;
         }
 
@@ -91,18 +78,19 @@ public class GameStateEvaluator {
         return visits;
     }
 
-    private boolean isStepBack(List<Action> lessons, final Position position){
+    private boolean isStepBack(List<Action> lessons, final Position latestPosition){
         boolean result = false;
         if (lessons.size() <=1){
             return false;
         }
+
         if (lessons.size() == 2){
-            if (position.getX() == lessons.get(0).getOldX() && position.getY() == lessons.get(0).getOldY()){
+            if (latestPosition.getX() == lessons.get(0).getOldX() && latestPosition.getY() == lessons.get(0).getOldY()){
                 return true;
             }
         }
         int index = lessons.size() - 2;
-        if (lessons.get(index).getOldX() == position.getX() && lessons.get(index).getOldY() == position.getY()){
+        if (lessons.get(index).getOldX() == latestPosition.getX() && lessons.get(index).getOldY() == latestPosition.getY()){
             result = true;
         }
 
@@ -113,10 +101,10 @@ public class GameStateEvaluator {
         return position.getX() < 0 || position.getX() >= boardLength || position.getY() < 0 || position.getY() >= boardLength;
     }
 
-    public void traceSolution(final List<Action> lessons){
+    public void traceSolution(final List<Action> lessons, final Position playerStartPosition){
         Solution solution = new Solution();
         int index = lessons.size()-1;
-        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
+        while (!(lessons.get(index).getOldX() == playerStartPosition.getX() && lessons.get(index).getOldY() == playerStartPosition.getY())){
             Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
             solution.getPositions().add(0, position);
             index--;
@@ -124,7 +112,7 @@ public class GameStateEvaluator {
 
         Position position = new Position(lessons.get(index).getNewX(),lessons.get(index).getNewY());
         solution.getPositions().add(0, position);
-        solution.getPositions().add(0,new Position(0, 0));
+        solution.getPositions().add(0,new Position(playerStartPosition.getX(), playerStartPosition.getY()));
         if (isUnique(solution)) {
             this.solutions.add(solution);
         }

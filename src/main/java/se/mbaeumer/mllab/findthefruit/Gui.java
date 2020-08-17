@@ -119,6 +119,7 @@ public class Gui extends Application {
         this.btnRun.setOnAction(actionEvent -> {
             try {
                 game = new Game(configValidationService.validateBoardLength(tfBoardLength.getText()),
+                        new Position(0,0),
                         configValidationService.validateFruitPosition(tfFruitPos.getText(), Integer.parseInt(tfBoardLength.getText())),
                         Integer.parseInt(cmbIterations.getValue()));
                 game.initGame();

@@ -12,12 +12,14 @@ public class Game {
     private int boardLength;
     private Player player;
     private String[][] chessboard;
+    private Position playerPosition;
     private Position fruitPosition;
     private int iterations;
     private GameStateEvaluator gameStateEvaluator;
 
-    public Game(final int boardLength, final Position fruitPosition, final int iterations) {
+    public Game(final int boardLength, final Position playerPosition, final Position fruitPosition, final int iterations) {
         this.boardLength = boardLength;
+        this.playerPosition = playerPosition;
         this.fruitPosition = fruitPosition;
         this.iterations = iterations;
     }
@@ -65,7 +67,7 @@ public class Game {
             }
         }
 
-        chessboard[0][0] = "p";
+        chessboard[playerPosition.getY()][playerPosition.getX()] = "p";
         chessboard[fruitPosition.getY()][fruitPosition.getX()] = "f";
     }
 
@@ -88,7 +90,7 @@ public class Game {
     }
 
     private void initPlayer(){
-        this.player = new Player(0, 0, 15);
+        this.player = new Player(playerPosition.getX(), playerPosition.getY(), 15);
     }
 
     private void initData(){
