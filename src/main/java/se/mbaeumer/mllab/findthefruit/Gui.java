@@ -29,6 +29,7 @@ public class Gui extends Application {
     private static int YSTART = 50;
     private static String DEFAULT_FRUIT_POS = "2,3";
     private static String DEFAULT_BOARD_LENGTH = "4";
+    private static String DEFAULT_PLAYER_POS = "0,0";
 
     private BorderPane borderPane;
     private Group root = new Group();
@@ -36,6 +37,8 @@ public class Gui extends Application {
     private FlowPane flowConfig;
     private Label lblBoardLength;
     private TextField tfBoardLength;
+    private Label lblPlayerPos;
+    private TextField tfPlayerPos;
     private Label lblFruitPos;
     private TextField tfFruitPos;
     private Label lblIterations;
@@ -93,11 +96,39 @@ public class Gui extends Application {
         });
         this.flowConfig.getChildren().add(this.tfBoardLength);
 
+        this.lblPlayerPos = new Label("Player pos:");
+        this.flowConfig.getChildren().add(this.lblPlayerPos);
+        this.tfPlayerPos = new TextField();
+        this.tfPlayerPos.setText(DEFAULT_PLAYER_POS);
+        // TODO: Player pos event handler
+        this.tfPlayerPos.textProperty().addListener(this::handleInput);
+        /*
+        this.tfPlayerPos.textProperty().addListener((observable, oldValue, newValue) -> {
+            hideErrorMessage();
+            try {
+                configValidationService.validateFruitPosition(tfPlayerPos.getText(), Integer.parseInt(tfBoardLength.getText()));
+            }catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
+                showErrorMessage(ex.getMessage());
+            }
+        });
+        */
+        this.flowConfig.getChildren().add(this.tfPlayerPos);
+
         this.lblFruitPos = new Label("Fruit pos:");
         this.flowConfig.getChildren().add(this.lblFruitPos);
         this.tfFruitPos = new TextField();
         this.tfFruitPos.setText(DEFAULT_FRUIT_POS);
-        this.tfFruitPos.textProperty().addListener((observable, oldValue, newValue) -> {
+        /*
+        this.tfPlayerPos.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+
+            }
+        });
+        */
+        this.tfFruitPos.textProperty().addListener(this::handleInput);
+        /*
+        this.tfPlayerPos.textProperty().addListener((observable, oldValue, newValue) -> {
            hideErrorMessage();
            try {
                configValidationService.validateFruitPosition(tfFruitPos.getText(), Integer.parseInt(tfBoardLength.getText()));
@@ -105,6 +136,7 @@ public class Gui extends Application {
                showErrorMessage(ex.getMessage());
            }
         });
+        */
         this.flowConfig.getChildren().add(this.tfFruitPos);
 
         List<String> list = List.of("10", "50", "100", "1000");
@@ -119,7 +151,7 @@ public class Gui extends Application {
         this.btnRun.setOnAction(actionEvent -> {
             try {
                 game = new Game(configValidationService.validateBoardLength(tfBoardLength.getText()),
-                        new Position(0,0),
+                        configValidationService.validateFruitPosition(tfPlayerPos.getText(), Integer.parseInt(tfBoardLength.getText())),
                         configValidationService.validateFruitPosition(tfFruitPos.getText(), Integer.parseInt(tfBoardLength.getText())),
                         Integer.parseInt(cmbIterations.getValue()));
                 game.initGame();
@@ -140,6 +172,15 @@ public class Gui extends Application {
         });
 
         this.flowConfig.getChildren().add(btnRun);
+    }
+
+    private void handleInput(ObservableValue<? extends String> observableValue, String s, String t1){
+        hideErrorMessage();
+        try {
+            configValidationService.validateFruitPosition(t1, Integer.parseInt(tfBoardLength.getText()));
+        }catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
+            showErrorMessage(ex.getMessage());
+        }
     }
 
     private void showErrorMessage(final String message){
