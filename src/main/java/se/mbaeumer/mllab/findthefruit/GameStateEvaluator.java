@@ -2,7 +2,6 @@ package se.mbaeumer.mllab.findthefruit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GameStateEvaluator {
 
@@ -35,17 +34,6 @@ public class GameStateEvaluator {
             return 1000;
         }
 
-        /*
-        int index = lessons.size() - 1;
-        while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
-
-
-            index--;
-        }
-        */
-        //int numberOfVisits = lessons.stream().filter(action -> action.getNewX() == position.getX() && action.getNewY() == position.getY())
-          //      .collect(Collectors.toList()).size();
-        //reward = reward - (numberOfVisits * 2);
         return reward;
     }
 
@@ -62,7 +50,6 @@ public class GameStateEvaluator {
         }
         int index = lessons.size() - 1;
 
-        //while (!(lessons.get(index).getOldX() == 0 && lessons.get(index).getOldY() == 0)){
         while (!(lessons.get(index).getOldX() == playerStartPosition.getX() && lessons.get(index).getOldY() == playerStartPosition.getY())){
             if (lessons.get(index).getOldX() == latestPosition.getX() && lessons.get(index).getOldY() == latestPosition.getY()){
                 visits++;

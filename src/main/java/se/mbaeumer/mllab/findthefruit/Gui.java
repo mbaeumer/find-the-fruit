@@ -1,11 +1,8 @@
 package se.mbaeumer.mllab.findthefruit;
 
 import javafx.application.Application;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
@@ -24,7 +21,6 @@ import java.util.List;
 
 public class Gui extends Application {
 
-    private static int LENGTH = 10;
     private static int XSTART = 50;
     private static int YSTART = 50;
     private static String DEFAULT_FRUIT_POS = "2,3";
@@ -100,43 +96,14 @@ public class Gui extends Application {
         this.flowConfig.getChildren().add(this.lblPlayerPos);
         this.tfPlayerPos = new TextField();
         this.tfPlayerPos.setText(DEFAULT_PLAYER_POS);
-        // TODO: Player pos event handler
         this.tfPlayerPos.textProperty().addListener(this::handleInput);
-        /*
-        this.tfPlayerPos.textProperty().addListener((observable, oldValue, newValue) -> {
-            hideErrorMessage();
-            try {
-                configValidationService.validateFruitPosition(tfPlayerPos.getText(), Integer.parseInt(tfBoardLength.getText()));
-            }catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
-                showErrorMessage(ex.getMessage());
-            }
-        });
-        */
         this.flowConfig.getChildren().add(this.tfPlayerPos);
 
         this.lblFruitPos = new Label("Fruit pos:");
         this.flowConfig.getChildren().add(this.lblFruitPos);
         this.tfFruitPos = new TextField();
         this.tfFruitPos.setText(DEFAULT_FRUIT_POS);
-        /*
-        this.tfPlayerPos.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-
-            }
-        });
-        */
         this.tfFruitPos.textProperty().addListener(this::handleInput);
-        /*
-        this.tfPlayerPos.textProperty().addListener((observable, oldValue, newValue) -> {
-           hideErrorMessage();
-           try {
-               configValidationService.validateFruitPosition(tfFruitPos.getText(), Integer.parseInt(tfBoardLength.getText()));
-           }catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
-               showErrorMessage(ex.getMessage());
-           }
-        });
-        */
         this.flowConfig.getChildren().add(this.tfFruitPos);
 
         List<String> list = List.of("10", "50", "100", "1000");
@@ -160,7 +127,6 @@ public class Gui extends Application {
                     populateActionTableView();
                     populateSolutionsCombobox();
                     populateSolutionTableView();
-                    //createSolutionStatus();
                 } catch (FileNotFoundException ex) {
 
                 }
@@ -215,7 +181,6 @@ public class Gui extends Application {
         this.flowRight.setOrientation(Orientation.HORIZONTAL);
 
         this.borderPane.setCenter(this.flowRight);
-
     }
 
     private void populateActionTableView(){
@@ -225,7 +190,6 @@ public class Gui extends Application {
 
         Player player = game.getPlayer();
         this.tvActions.setItems(FXCollections.observableList(player.getLessons()));
-
     }
 
     private void createActionTableView(){
@@ -266,24 +230,9 @@ public class Gui extends Application {
             this.cmbSolutions.prefWidthProperty().bind(this.flowRight.widthProperty());
             this.cmbSolutions.valueProperty().addListener((observable, oldValue, newValue) -> {
                 this.tvSolution.getItems().clear();
-                /*
-                GameStateEvaluator gameStateEvaluator = game.getGameStateEvaluator();
-                System.out.println("Solutions: " + gameStateEvaluator.getSolutions().size());
-                System.out.println("Pos: " + gameStateEvaluator.getSolutions().get(this.cmbSolutions.getSelectionModel().getSelectedIndex()).getPositions().size());
-                System.out.println("selected " + this.cmbSolutions.getSelectionModel().getSelectedIndex());
-                */
                 populateSolutionTableView();
-                //this.tvSolution.setItems(FXCollections.observableList(gameStateEvaluator.getSolutions()
-                        //.get(0).getPositions()));
 
             });
-            /*this.cmbSolutions.valueProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue observableValue, Object o, Object t1) {
-
-                }
-            });
-            */
         }
 
         this.cmbSolutions.getItems().clear();
@@ -300,12 +249,7 @@ public class Gui extends Application {
         }else{
             this.cmbSolutions.setDisable(true);
         }
-
-
-
     }
-
-
 
     private void populateSolutionTableView(){
         if (tvSolution == null){
